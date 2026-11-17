@@ -331,3 +331,19 @@ pub(crate) fn launch(
         }
     }
 }
+
+/// Prepare components without starting a backend or running a game task.
+pub(crate) fn deploy_only() -> Result<()> {
+    crate::i18n::init();
+    setup::setup_environment()?;
+    let _guard = crate::initialize_logging()?;
+    let root = setup::azurpilot_repo_dir();
+    ensure_not_running(&root)?;
+    components::deploy(
+        &root,
+        &mut |p| tracing::info!("{}", p.detail),
+        Arc::new(AtomicBool::new(false)),
+        false,
+        &Preferences::default(),
+    )
+}

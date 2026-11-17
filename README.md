@@ -36,6 +36,8 @@ python tools/package_launcher.py
 
 原始 Cargo 产物为 `target/release/warshippilot-launcher.exe`，交付名为 `WarshipPilot.exe`。
 
+`WarshipPilot.exe --deploy-only` 仅部署组件，不启动后台，可用于迁移预部署。
+
 `WarshipPilot.exe --verify-install` 在当前安装目录验证部署、启动、健康检查和停止，结果写入 `log/launcher-verification.json`；`--repair` 先备份并重建环境。已有后台运行时会拒绝操作。
 
 ## 分发

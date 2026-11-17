@@ -342,6 +342,9 @@ fn start_minimized_arg_present() -> bool {
 }
 
 fn main() -> Result<()> {
+    if std::env::args().any(|arg| arg == "--deploy-only") {
+        return warship::deploy_only();
+    }
     if std::env::args().any(|arg| arg == "--verify-install") {
         return warship::verify_install();
     }
