@@ -47,6 +47,19 @@ class ComponentPackagingTest(unittest.TestCase):
             with zipfile.ZipFile(path) as package:
                 self.assertEqual(package.read('module/test.py'), b'payload')
 
+    def test_components_and_bootstrap_list_two_mirrors_before_github(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            file = root / 'file.txt'
+            file.write_bytes(b'payload')
+            urls = archive(root / 'out', 'adb', [(file, 'adb.exe')])['urls']
+        hosts = [url.split('/')[2] for url in urls]
+        self.assertEqual(hosts, ['ghfast.top', 'gh-proxy.com', 'github.com'])
+        self.assertTrue(all(url.endswith(Path(urls[0]).name) for url in urls))
+        from build_components import DEPLOY_RAW_BASES
+        self.assertEqual([base.split('/')[2] for base in DEPLOY_RAW_BASES],
+                         ['ghfast.top', 'gh-proxy.com', 'raw.githubusercontent.com'])
+
     def test_runtime_publish_preserves_launcher_github_url_and_unknown_fields(self):
         current = {'version': '3.0.1', 'platforms': {'windows-x86_64': {'url': 'primary', 'github_url': 'github', 'sha256': 'hash'}}, 'notes': 'keep', 'future': True}
         runtime = {'schema': 2, 'platforms': {'windows-x86_64': []}}

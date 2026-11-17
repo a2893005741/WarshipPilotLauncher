@@ -19,11 +19,12 @@ from pathlib import Path
 
 IDS = ('git', 'adb')
 SCHEMA = 2
-CNB_BASE = 'https://ghfast.top/https://github.com/a2893005741/WarshipPilotLauncher/releases/download/runtime'
 GITHUB_BASE = 'https://github.com/a2893005741/WarshipPilotLauncher/releases/download/runtime'
-# deploy 引导脚本直接从仓库 master raw 下载，跟随最新提交，不锁定版本。
+# 运行机直连 GitHub 常超时：两家公共镜像在前，直连兜底，任一家失效仍可部署。
+MIRRORS = ('https://ghfast.top/', 'https://gh-proxy.com/')
+# deploy 引导文件从固定后端提交的 raw 下载（与清单摘要一致），不跟随移动中的 main。
 DEPLOY_RAW_BASES = [
-    'https://ghfast.top/https://raw.githubusercontent.com/a2893005741/WarshipPilot/{revision}',
+    *(mirror + 'https://raw.githubusercontent.com/a2893005741/WarshipPilot/{revision}' for mirror in MIRRORS),
     'https://raw.githubusercontent.com/a2893005741/WarshipPilot/{revision}',
 ]
 DEPLOY_TEMPLATES = ('config/deploy.template.yaml',)
@@ -59,7 +60,7 @@ def archive(output, name, files):
     final = output / filename
     temporary.replace(final)
     return {'id': name, 'sha256': digest, 'size': final.stat().st_size,
-            'urls': [f'{CNB_BASE}/{filename}', f'{GITHUB_BASE}/{filename}']}
+            'urls': [*(f'{mirror}{GITHUB_BASE}/{filename}' for mirror in MIRRORS), f'{GITHUB_BASE}/{filename}']}
 
 
 def tree(root, prefix):
