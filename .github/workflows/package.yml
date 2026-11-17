@@ -1,0 +1,97 @@
+name: Package WarshipPilot
+on:
+  workflow_dispatch:
+    inputs:
+      backend_ref:
+        description: WarshipPilot commit or branch
+        default: main
+        required: true
+      publish:
+        description: Publish assets and stable manifest
+        type: boolean
+        default: false
+permissions:
+  contents: write
+concurrency:
+  group: warship-release-manifest
+  cancel-in-progress: false
+env:
+  AZURPILOT_LOG_MASK_B64: IyBDSSDml6Xlv5fmjqnnoIHmuIXljZXvvIjmmI7mlofln7rlh4bvvInjgIINCiMg5q+P5LiqIGpvYiDpppbmraXmiorlroPpgJDooYzms6jlhozkuLogOjphZGQtbWFzazo677yMR2l0SHViIOS8muaKiuaXpeW/l+S4reWRveS4reeahOWtkOS4suabv+aNouS4uiAqKirjgIINCiMg5L+u5pS55ZCO5omn6KGMOiBiYXNlNjQgLXcwIOacrOaWh+S7tu+8iOi3s+i/h+azqOmHiuihjO+8ie+8jOaKiui+k+WHuuWQjOatpeabv+aNog0KIyAuZ2l0aHViL3dvcmtmbG93cy9wYWNrYWdlLnltbCDkuI4gdGVzdC55bWwg5Lit5omA5pyJIEFaVVJQSUxPVF9MT0dfTUFTS19CNjQg55qE5YC844CCDQojIOazqOaEj++8muacrOaWh+S7tuS4jeS8muWHuueOsOWcqOaXpeW/l+mHjO+8iOaOqeeggeatpemqpOWPqui+k+WHuiBhZGQtbWFzayDlkb3ku6TvvInvvIzmlLnliqjor7fkv53mjIHmr4/ooYzkuIDkuKrlrozmlbTmnaHnm67jgIHkuI3opoHnlZnnqbrooYzjgIINCmh0dHAuaHR0cHM6Ly9naXRodWIuY29tLy5leHRyYWhlYWRlcg0KaHR0cHM6Ly9sYXVuY2hlci1hcGkuYXp1cnBpbG90LmNvbS91cGRhdGEvc3RhYmxlLmpzb24NCmh0dHBzOi8vbGF1bmNoZXItYXBpLmF6dXJwaWxvdC5jb20NCmh0dHBzOi8vbGF1bmNoZXItZG93bmxvYWQuYXp1cnBpbG90LmNvbQ0KaHR0cHM6Ly9hcGkuY25iLmNvb2wNCmh0dHBzOi8vY25iLmNvb2wNCmh0dHBzOi8vZ2l0aHViLmNvbS93ZXNzMDkvQXp1clBpbG90TGF1bmNoZXINCmh0dHBzOi8vZ2l0aHViLmNvbS93ZXNzMDkvQXp1clBpbG90DQpodHRwczovL2FwaS5naXRodWIuY29tDQpodHRwczovL3VwbG9hZHMuZ2l0aHViLmNvbQ0KaHR0cHM6Ly9vYmplY3RzLmdpdGh1YnVzZXJjb250ZW50LmNvbQ0KaHR0cHM6Ly9kb2NzLmdpdGh1Yi5jb20NCmh0dHBzOi8vZ2l0aHViLmNvbS9hc3RyYWwtc2gvc2V0dXAtdXYNCmh0dHBzOi8vcmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbS9hc3RyYWwtc2gvc2V0dXAtdXYNCmh0dHBzOi8vZ2l0aHViLmNvbS9hc3RyYWwtc2gvdXYNCmh0dHBzOi8vYXN0cmFsLnNoDQpodHRwczovL2dpdGh1Yi5jb20vYWN0aW9ucy9weXRob24tdmVyc2lvbnMNCmh0dHBzOi8vZ2l0aHViLmNvbS9hY3Rpb25zL3NldHVwLXB5dGhvbg0KaHR0cHM6Ly9naXRodWIuY29tL2FjdGlvbnMvbm9kZS12ZXJzaW9ucw0KaHR0cHM6Ly9zdGF0aWMucnVzdC1sYW5nLm9yZw0KaHR0cHM6Ly9zaC5ydXN0dXAucnMNCmh0dHBzOi8vY3JhdGVzLmlvDQpodHRwczovL2luZGV4LmNyYXRlcy5pbw0KaHR0cHM6Ly9zdGF0aWMuY3JhdGVzLmlvDQpodHRwczovL2RvYy5ydXN0LWxhbmcub3JnDQpodHRwczovL2dpdGh1Yi5jb20vcnVzdC1sYW5nDQpodHRwczovL3YyLnRhdXJpLmFwcA0KaHR0cHM6Ly90YXVyaS5hcHANCmh0dHBzOi8vd3d3Lmlubm9zZXR1cC5jb20NCmh0dHBzOi8vcm9sbHVwanMub3JnDQpodHRwczovL3ZpdGUuZGV2DQpodHRwczovL3JlZ2lzdHJ5Lm5wbWpzLm9yZw0KaHR0cHM6Ly9kb2NzLm5wbWpzLmNvbQ0KaHR0cHM6Ly9jbGkuZ2l0aHViLmNvbQ0KaHR0cHM6Ly9weXBpLm9yZw0KaHR0cHM6Ly9maWxlcy5weXRob25ob3N0ZWQub3JnDQpodHRwczovL2RsLmdvb2dsZS5jb20NCmh0dHBzOi8vcGFja2FnZXMubWljcm9zb2Z0LmNvbQ0KaHR0cHM6Ly9jaG9jb2xhdGV5Lm9yZw0KaHR0cHM6Ly9jb21tdW5pdHkuY2hvY29sYXRleS5vcmcNCmh0dHBzOi8vYWthLm1zDQpodHRwczovL2dpdGh1Yi5jb20vY2xvdWRmbGFyZS93b3JrZXJzLXNkaw0KaHR0cHM6Ly9leGFtcGxlLmNvbQ0KbGF1bmNoZXItYXBpLmF6dXJwaWxvdC5jb20vdXBkYXRhLyoNCmxhdW5jaGVyLWFwaS5henVycGlsb3QuY29tDQpsYXVuY2hlci1kb3dubG9hZC5henVycGlsb3QuY29tDQphenVycGlsb3QuY29tDQphcGkuY25iLmNvb2wNCmNuYi5jb29sDQpsYXVuY2hlci1jbG91ZGZsYXJlLWNkbi1kb3dubG9hZC5henVycGlsb3QuY29tDQoNCmh0dHBzOi8vZ2l0aHViLmNvbS9hMjg5MzAwNTc0MS9hbGFzLWxhdW5jaGVyDQpodHRwczovL2dpdGh1Yi5jb20vYTI4OTMwMDU3NDEvV2Fyc2hpcFBpbG90DQpodHRwczovL2doZmFzdC50b3ANCmh0dHBzOi8vZ2gtcHJveHkuY29tDQpodHRwczovL3Jhdy5naXRodWJ1c2VyY29udGVudC5jb20NCg0KaHR0cHM6Ly9naXRodWIuY29tL2EyODkzMDA1NzQxL1dhcnNoaXBQaWxvdExhdW5jaGVyDQo=
+jobs:
+  windows:
+    runs-on: windows-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - name: Register log masks
+        shell: pwsh
+        run: |
+          $masks=[Text.Encoding]::UTF8.GetString([Convert]::FromBase64String($env:AZURPILOT_LOG_MASK_B64))
+          $masks -split "`n" | ForEach-Object { if ($_.Trim()) { Write-Output "::add-mask::$($_.Trim())" } }
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+      - uses: actions/checkout@v4
+        with:
+          repository: a2893005741/WarshipPilot
+          ref: ${{ inputs.backend_ref }}
+          path: backend
+      - uses: astral-sh/setup-uv@v6
+      - name: Verify launcher
+        shell: pwsh
+        run: |
+          npm.cmd --prefix frontend ci 2>&1 | ForEach-Object { "$_" -replace 'https?://\S+', '<URL>' }
+          if ($LASTEXITCODE) { exit $LASTEXITCODE }
+          npm.cmd --prefix frontend test
+          if ($LASTEXITCODE) { exit $LASTEXITCODE }
+          npm.cmd --prefix frontend run build
+          if ($LASTEXITCODE) { exit $LASTEXITCODE }
+          python -m unittest discover -s tools -p "test_*.py"
+          if ($LASTEXITCODE) { exit $LASTEXITCODE }
+          cargo check --locked --all-targets
+          if ($LASTEXITCODE) { exit $LASTEXITCODE }
+          cargo test --locked --all-targets
+          exit $LASTEXITCODE
+      - name: Build release and fixed-commit components
+        shell: pwsh
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          $env:AZURPILOT_BOOTSTRAP_UV=(Get-Command uv).Source
+          cargo build --locked --release --features custom-protocol
+          if ($LASTEXITCODE) { exit $LASTEXITCODE }
+          python tools/build_components.py --source backend --output release --platform windows-x86_64
+          if ($LASTEXITCODE) { exit $LASTEXITCODE }
+          python tools/prepare_release.py --output release
+          if ($LASTEXITCODE) { exit $LASTEXITCODE }
+          python tools/package_launcher.py
+          exit $LASTEXITCODE
+      - uses: actions/upload-artifact@v4
+        with:
+          name: WarshipPilot-Windows-x64
+          path: |
+            release/*
+            WarshipPilot-Windows-x86_64.zip
+      - name: Publish assets before manifest
+        if: inputs.publish
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release view runtime *> $null
+          if ($LASTEXITCODE) { gh release create runtime --title 'Runtime components' --notes 'Content-addressed Git and ADB' }
+          gh release upload runtime release/component-*.zip --clobber
+          if ($LASTEXITCODE) { exit $LASTEXITCODE }
+          $version=(Get-Content tauri.conf.json | ConvertFrom-Json).version
+          gh release view "v$version" *> $null
+          if ($LASTEXITCODE) { gh release create "v$version" --title "舰R助手启动器 $version" --notes-file docs/release-notes.md }
+          gh release upload "v$version" release/WarshipPilot.exe WarshipPilot-Windows-x86_64.zip --clobber
+          if ($LASTEXITCODE) { exit $LASTEXITCODE }
+          gh release view manifest *> $null
+          if ($LASTEXITCODE) { gh release create manifest --title 'Stable manifest' --notes 'Fixed-commit deployment metadata' }
+          gh release upload manifest release/stable.json --clobber
+          exit $LASTEXITCODE
